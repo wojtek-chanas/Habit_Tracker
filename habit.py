@@ -30,32 +30,46 @@ class Habit:
                     # update the longest streak if current streak is longer
                     if self.streak > self.longest_streak:
                         self.longest_streak = self.streak
-                else:
+
+                elif len(self.history) == 1:
                     self.streak = 1
+
+                else:
+                    pass
             outcome = f'{self.streak} day(s)'
             return outcome
 
         elif self.frequency == 'Weeks':
             for i in range(0, len(self.history)):
-                if sorted_history[i] - sorted_history[i - 1] <= timedelta(days=7):
+                # datetime.date.isocalendar() allows to compare week numbers, so the amount of days in between each
+                # completion of the habit doesn't matter, as long as it's marked completed in two consecutive weeks
+                if sorted_history[i].isocalendar().week - sorted_history[i - 1].isocalendar().week == 1:
                     self.streak += 1
                     # update the longest streak if current streak is longer
                     if self.streak > self.longest_streak:
                         self.longest_streak = self.streak
-                else:
+
+                elif len(self.history) == 1:
                     self.streak = 1
+                else:
+                    pass
             outcome = f'{self.streak} week(s)'
             return outcome
 
         elif self.frequency == 'Months':
             for i in range(0, len(self.history)):
-                if sorted_history[i] - sorted_history[i - 1] <= timedelta(days=30):
+                # compare month numbers and add extra condition for habit done consecutively in december and january
+                if sorted_history[i].month - sorted_history[i - 1].month <= 1 or \
+                        (sorted_history[i].month == 1 and sorted_history[i - 1].month == 12):
                     self.streak += 1
                     # update the longest streak if current streak is longer
                     if self.streak > self.longest_streak:
                         self.longest_streak = self.streak
-                else:
+
+                elif len(self.history) == 1:
                     self.streak = 1
+                else:
+                    pass
             outcome = f'{self.streak} month(s)'
             return outcome
 
@@ -81,11 +95,11 @@ class Habit:
     def is_completed(self):
         """ Method checks whether the habit's goal can be recognized as accomplished  """
         try:
-            # The user just achieved the target, thus #party_time
+            # The user just achieved the target
             if int(len(self.history))/int(self.goal) == 1:
                 self.isCompleted = True
                 self.congratulate = True
-            # The user exceeded the goal, don't trigger congratulate pop-ups anymore
+            # The user exceeded the goal
             elif int(len(self.history))/int(self.goal) >= 1:
                 self.isCompleted = True
                 self.congratulate = False
@@ -95,7 +109,6 @@ class Habit:
                 self.congratulate = False
 
         except ValueError or ZeroDivisionError:
-            print("ValueError occurred in Habit-class method is_completed(). \n Goal changed to 1.")
             self.goal = '1'
             self.count_progress()
             self.isCompleted = False
