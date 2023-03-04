@@ -13,14 +13,24 @@ class AddHabit(MDScreen):
     def on_enter(self, *args):
 
         # name variable with required parameter set to True
-        name = MDTextField(hint_text='Habit Name', text='Sample name', helper_text='Name is required!',
-                           helper_text_mode='on_error', font_size=28, size_hint_y=None, height=50,
-                           pos_hint={'center_x': 0.5, 'center_y': 0.9}, required=True, error_color=(1, 0, 0, 1))
+        name = MDTextField(hint_text='Habit Name',
+                           text='Sample Habit',
+                           helper_text='Name is required!',
+                           helper_text_mode='on_error',
+                           font_size=28,
+                           size_hint_y=None,
+                           height=50,
+                           pos_hint={'center_x': 0.5, 'center_y': 0.9},
+                           required=True,
+                           error_color=(1, 0, 0, 1))
 
         # adding description is optional
         description = MDTextField(hint_text='Habit description',
                                   helper_text='Elaborate a bit more, specify what\'s __init__ ;)',
-                                  helper_text_mode='on_focus', font_size=24, size_hint_y=None, height=50,
+                                  helper_text_mode='on_focus',
+                                  font_size=24,
+                                  size_hint_y=None,
+                                  height=50,
                                   pos_hint={'center_x': 0.5, 'center_y': 0.7})
 
         goal = MDTextField(hint_text='Goal',
@@ -36,7 +46,10 @@ class AddHabit(MDScreen):
                            input_filter=positive_int_input_filter)
 
         # Frequency displays an options list, to prevent user's typos from causing errors
-        frequency = Spinner(values=("Days", "Weeks", "Months"), font_size=24, size_hint_y=None, height=50,
+        frequency = Spinner(values=("Days", "Weeks", "Months"),
+                            font_size=24,
+                            size_hint_y=None,
+                            height=50,
                             pos_hint={'center_x': 0.5, 'center_y': 0.35},
                             text='Select habit\'s frequency')
 
@@ -76,4 +89,3 @@ class AddHabit(MDScreen):
 
     def on_leave(self, *args):
         self.clear_widgets()
-
