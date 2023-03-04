@@ -1,7 +1,9 @@
 from kivy.uix.button import Button
 from kivy.uix.spinner import Spinner
+from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
+from kivy.clock import Clock
 from functions import habits, add_habit, positive_int_input_filter
 from data import save_changes
 
@@ -9,6 +11,7 @@ from data import save_changes
 class AddHabit(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.frequency_err = None
 
     def on_enter(self, *args):
 
@@ -81,6 +84,14 @@ class AddHabit(MDScreen):
                                                                     in habits]
             save_changes(habits)
             self.manager.current = 'MainScreen'
+        elif frequency not in ("Days", "Weeks", "Months"):
+            self.frequency_err = MDLabel(text='Select the periodicity first!',
+                                         font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
+                                         pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))
+            self.add_widget(self.frequency_err)
+            Clock.schedule_once(lambda x: self.remove_widget(self.frequency_err), 2)
+
+
         else:
             pass
 
