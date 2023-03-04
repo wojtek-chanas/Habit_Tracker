@@ -14,6 +14,7 @@ class Habit:
         self.isCompleted = None
         self.frequency = frequency
         self.longest_streak = 0
+        self.creation_date = None
 
     def count_streak(self):
         """ Returns current day-streak. """

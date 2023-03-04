@@ -1,3 +1,4 @@
+from datetime import date
 from habit import Habit
 import data
 
@@ -7,6 +8,7 @@ habits = data.load_habits()
 def add_habit(name, description, goal, frequency):
     global habits
     new_habit = Habit(name, description, goal, frequency)
+    new_habit.creation_date = date.today()
     habits.append(new_habit)
     new_habit.index = habits.index(new_habit)
     data.save_changes(habits)
