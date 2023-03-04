@@ -3,7 +3,10 @@ from kivy.uix.button import Button
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
+
+from MetricsScreen import FrameBoxLayout
 from functions import habits
 from data import save_changes
 
@@ -14,12 +17,14 @@ current_habit_index = 0
 class MainScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.selected_habit = None
+        self.selected_habit_box = None
         self.table = None
 
     def on_enter(self, *args):
         self.table = MDDataTable(
-            pos_hint={'center_x': 0.5, 'center_y': 0.6},
-            size_hint=(0.95, 0.75),
+            pos_hint={'center_x': 0.5, 'center_y': 0.65},
+            size_hint=(0.95, 0.65),
             use_pagination=True,
             check=False,
             column_data=[
@@ -43,6 +48,7 @@ class MainScreen(MDScreen):
         metrics_button.bind(on_release=self.goto_metrics)
         self.add_widget(metrics_button)
 
+
     def goto_metrics(self, *args):
         self.manager.current = 'MetricsScreen'
 
@@ -59,6 +65,8 @@ class MainScreen(MDScreen):
         global current_habit_index
         current_habit_index = int(row.table.recycle_data[start_index]["text"])-1  # deduct 1 to adjust for zero-indexing
         print("current_index= ", current_habit_index)
+        self.show_selected_habit()
+        return current_habit_index
 
     def my_temp_fun(self):
         def mark_done_in_habits(*args):
@@ -100,3 +108,14 @@ class MainScreen(MDScreen):
 
     def add_window(self, *args):
         self.manager.current = 'Add new habit'
+
+    def show_selected_habit(self):
+        self.selected_habit = MDLabel(text=f'Selected habit:  {habits[current_habit_index].name}',
+                                      font_size=24, size_hint=(0.9, 0.9), height=50,
+                                      pos_hint={'center_x': 0.5, 'center_y': 0.5})
+
+        self.selected_habit_box = FrameBoxLayout(orientation='vertical', size_hint=(0.4, 0.05), pos_hint={'center_x': 0.255,
+                                                                                                          'center_y': 0.37})
+
+        self.selected_habit_box.add_widget(self.selected_habit)
+        self.add_widget(self.selected_habit_box)
