@@ -36,7 +36,7 @@ function App() {
 
 
 ## 🚀 About Me
-I'm a full stack developer...
+I'm a Data Science student @IU International University of Applied Sciences...
 
 
 ## Screenshots
