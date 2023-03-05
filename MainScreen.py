@@ -1,5 +1,7 @@
 from kivy.metrics import dp
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.spinner import Spinner
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.dialog import MDDialog
@@ -17,11 +19,52 @@ current_habit_index = 0
 class MainScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.table_filter_button = None
+        self.table_view_box = None
+        self.table_view = None
+        self.table_view_options = None
         self.selected_habit = None
         self.selected_habit_box = None
         self.table = None
 
     def on_enter(self, *args):
+        # Create add button
+        add_button = Button(text='Add Habit', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.4, 'center_y': 0.06})
+        add_button.bind(on_release=self.add_window)
+
+        # Create metrics button
+        metrics_button = Button(text='Metrics', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.6, 'center_y': 0.06})
+        metrics_button.bind(on_release=self.goto_metrics)
+
+        # Filter list by periodicity
+        self.table_view_options = Spinner(values=("all", "daily", "weekly", "monthly", "completed"), text='all',
+                                          size_hint=(0.4, None), font_size=18,
+                                          height=20,
+                                          pos_hint={'center_x': 0.5, 'center_y': 0.5},
+                                          )
+
+        self.table_filter_button = Button(text='filter', size_hint=(0.4, None), font_size=18, height=20,
+                                          pos_hint={'center_x': 0.7, 'center_y': 0.5}, on_release=self.filter_table)
+
+        self.table_view = MDLabel(text=" show habits: ", font_size=24, height=20, padding_x=1,
+                                  size_hint=(0.4, None), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+
+        self.table_view_box = BoxLayout(orientation='horizontal', size_hint=(0.4, 0.05), spacing=0,
+                                        pos_hint={'center_x': 0.77, 'center_y': 0.28})
+        # Add widgets to the box
+        self.table_view_box.add_widget(self.table_view)
+        self.table_view_box.add_widget(self.table_view_options)
+        self.table_view_box.add_widget(self.table_filter_button)
+
+        # Add widgets to the screen
+        self.add_widget(self.table_view_box)
+        self.add_widget(metrics_button)
+        self.add_widget(add_button)
+
+        # Display the data table
+        self.load_table()
+
+    def load_table(self):
         self.table = MDDataTable(
             pos_hint={'center_x': 0.5, 'center_y': 0.65},
             size_hint=(0.95, 0.65),
@@ -34,23 +77,17 @@ class MainScreen(MDScreen):
                 ('Last done', dp(20)),
                 ("Current streak", dp(20)),
                 ("Progress", dp(15))],
-            row_data=[(habit.index + 1, habit.name, habit.description, habit.when_done(), habit.count_streak(),
-                       habit.count_progress()) for habit in habits])  # habit.index + 1 so numbers won't start from 0
+        )
 
+        self.filter_table()
         self.table.bind(on_row_press=self.row_press)
-
-        add_button = Button(text='Add Habit', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.4, 'center_y': 0.06})
-        add_button.bind(on_release=self.add_window)
-        self.add_widget(add_button)
         self.add_widget(self.table)
-
-        metrics_button = Button(text='Metrics', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.6, 'center_y': 0.06})
-        metrics_button.bind(on_release=self.goto_metrics)
-        self.add_widget(metrics_button)
-
 
     def goto_metrics(self, *args):
         self.manager.current = 'MetricsScreen'
+
+    def goto_details(self, *args):
+        self.manager.current = 'HabitDetailsScreen.py'
 
     def on_leave(self, *args):
         self.clear_widgets()
@@ -73,8 +110,10 @@ class MainScreen(MDScreen):
             habits[current_habit_index].mark_done()
             save_changes(habits)
             # Update the table
-            self.on_leave()
-            self.on_enter()
+            self.remove_widget(self.table)
+            self.remove_widget(self.selected_habit_box)
+            self.load_table()
+            self.show_selected_habit()
             # Check if the goal is reached, if so display a congrats popup
             if habits[current_habit_index].isCompleted and habits[current_habit_index].congratulate:
                 def close_popup(*args):
@@ -106,6 +145,11 @@ class MainScreen(MDScreen):
         edit_button.bind(on_release=go_to_menu)
         self.add_widget(edit_button)
 
+        # Create details button
+        details_button = Button(text='Habit Details', size_hint=(0.4, 0.05), pos_hint={'center_x': 0.5, 'center_y': 0.235})
+        details_button.bind(on_release=self.goto_details)
+        self.add_widget(details_button)
+
     def add_window(self, *args):
         self.manager.current = 'Add new habit'
 
@@ -114,8 +158,41 @@ class MainScreen(MDScreen):
                                       font_size=24, size_hint=(0.9, 0.9), height=50,
                                       pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
-        self.selected_habit_box = FrameBoxLayout(orientation='vertical', size_hint=(0.4, 0.05), pos_hint={'center_x': 0.255,
-                                                                                                          'center_y': 0.37})
+        self.selected_habit_box = FrameBoxLayout(orientation='vertical', size_hint=(0.4, 0.05),
+                                                 pos_hint={'center_x': 0.255, 'center_y': 0.37})
 
         self.selected_habit_box.add_widget(self.selected_habit)
         self.add_widget(self.selected_habit_box)
+
+    def filter_table(self, *args):
+
+        if self.table_view_options.text == "all":
+
+            self.table.row_data = [(habit.index + 1, habit.name, habit.description, habit.when_done(),
+                                    habit.streak_st(), habit.count_progress()) for habit in habits]
+
+        elif self.table_view_options.text == "daily":
+
+            self.table.row_data = [(habit.index + 1, habit.name, habit.description, habit.when_done(),
+                                    habit.streak_st(), habit.count_progress()) for habit in habits
+                                   if habit.frequency == "Days"]
+
+        elif self.table_view_options.text == "weekly":
+
+            self.table.row_data = [(habit.index + 1, habit.name, habit.description, habit.when_done(),
+                                    habit.streak_st(), habit.count_progress()) for habit in habits
+                                   if habit.frequency == "Weeks"]
+
+        elif self.table_view_options.text == "monthly":
+
+            self.table.row_data = [(habit.index + 1, habit.name, habit.description, habit.when_done(),
+                                    habit.streak_st(), habit.count_progress()) for habit in habits
+                                   if habit.frequency == "Months"]
+
+        elif self.table_view_options.text == "completed":
+
+            self.table.row_data = [(habit.index + 1, habit.name, habit.description, habit.when_done(),
+                                    habit.streak_st(), habit.count_progress()) for habit in habits
+                                   if habit.isCompleted]
+
+        return self.table.row_data
