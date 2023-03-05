@@ -59,7 +59,7 @@ def demo_add_habit():
         new_habit.creation_date = random_history[0] - timedelta(days=4)
         data.save_changes(habits)
         i += 1
-    print("Habits have been added successfully")
+    print("Habits have been added successfully.")
 
 
 demo_add_habit()

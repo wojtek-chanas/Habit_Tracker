@@ -1,6 +1,7 @@
 from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.spinner import Spinner
+from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
@@ -8,6 +9,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
 from functions import habits, positive_int_input_filter
 from data import save_changes
+
 
 
 def fetch_index():
@@ -20,6 +22,8 @@ def fetch_index():
 class EditScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.error_message = None
+        self.err_message_box = None
         self.goal_err = None
         self.frequency = None
         self.habit_name = None
@@ -41,39 +45,52 @@ class EditScreen(MDScreen):
 
     def on_enter(self, *args):
         print('current index= ', fetch_index())
-        self.habit_name = MDTextField(hint_text='Change habit name', text=habits[fetch_index()].name, mode="fill",
-                                      helper_text='Name can\'t be empty.', required=True,
-                                      helper_text_mode='on_error', font_size=24, size_hint=(0.9, None), height=50,
-                                      pos_hint={'center_x': 0.5, 'center_y': 0.9})
+        try:
+            self.habit_name = MDTextField(hint_text='Change habit name', text=habits[fetch_index()].name, mode="fill",
+                                          helper_text='Name can\'t be empty.', required=True,
+                                          helper_text_mode='on_error', font_size=24, size_hint=(0.9, None), height=50,
+                                          pos_hint={'center_x': 0.5, 'center_y': 0.9})
 
-        self.description = MDTextField(hint_text='Description', text=habits[fetch_index()].description, mode="fill",
-                                       helper_text='Type in a new description.', helper_text_mode='on_focus',
-                                       font_size=24, size_hint=(0.9, None), height=50,
-                                       pos_hint={'center_x': 0.5, 'center_y': 0.7})
+            self.description = MDTextField(hint_text='Description', text=habits[fetch_index()].description, mode="fill",
+                                           helper_text='Type in a new description.', helper_text_mode='on_focus',
+                                           font_size=24, size_hint=(0.9, None), height=50,
+                                           pos_hint={'center_x': 0.5, 'center_y': 0.7})
 
-        self.goal = MDTextField(hint_text='Goal', text=habits[fetch_index()].goal, mode="fill",
-                                helper_text='The goal must be an integer larger than 0', required=True,
-                                helper_text_mode='on_error', font_size=24, size_hint=(0.9, None), height=50,
-                                pos_hint={'center_x': 0.5, 'center_y': 0.5}, input_filter=positive_int_input_filter)
-        
-        self.frequency = Spinner(values=("Days", "Weeks", "Months"), font_size=24, size_hint_y=None, height=50,
-                                 pos_hint={'center_x': 0.5, 'center_y': 0.35},
-                                 text=habits[fetch_index()].frequency)
-        
-        self.add_widget(self.habit_name)
-        self.add_widget(self.description)
-        self.add_widget(self.goal)
-        self.add_widget(self.frequency)
+            self.goal = MDTextField(hint_text='Goal', text=habits[fetch_index()].goal, mode="fill",
+                                    helper_text='The goal must be an integer larger than 0', required=True,
+                                    helper_text_mode='on_error', font_size=24, size_hint=(0.9, None), height=50,
+                                    pos_hint={'center_x': 0.5, 'center_y': 0.5}, input_filter=positive_int_input_filter)
+
+            self.frequency = Spinner(values=("Days", "Weeks", "Months"), font_size=24, size_hint_y=None, height=50,
+                                     pos_hint={'center_x': 0.5, 'center_y': 0.35},
+                                     text=habits[fetch_index()].frequency)
+
+            self.add_widget(self.habit_name)
+            self.add_widget(self.description)
+            self.add_widget(self.goal)
+            self.add_widget(self.frequency)
+
+        except IndexError:
+            self.error_message = MDLabel(text=f"Nothing to see here... \nCome back later!", font_size=24,
+                                         size_hint=(0.9, 0.9), height=50, halign='center',
+                                         pos_hint={'center_x': 0.5, 'center_y': 0.5})
+            self.err_message_box = MDBoxLayout(orientation='vertical', size_hint=(0.9, 0.1), pos_hint={'center_x': 0.5,
+                                                                                                     'center_y': 0.5})
+            self.err_message_box.add_widget(self.error_message)
+            self.add_widget(self.err_message_box)
 
     def confirm_dbox(self, *args):
         """ Displays dialog box to confirm habit deletion """
-        delete_button = MDFlatButton(text='Delete', on_release=self.delete)
-        cancel_button = MDFlatButton(text='Cancel', on_release=self.dbox_cancel)
-        self.dialog = MDDialog(title='Delete Habit', text=f'Are you sure? Habit: {habits[fetch_index()].name} '
-                                                          f'and its data will be lost.',
-                               size_hint=(0.6, 0.2),
-                               buttons=[delete_button, cancel_button])
-        self.dialog.open()
+        try:
+            delete_button = MDFlatButton(text='Delete', on_release=self.delete)
+            cancel_button = MDFlatButton(text='Cancel', on_release=self.dbox_cancel)
+            self.dialog = MDDialog(title='Delete Habit', text=f'Are you sure? Habit: {habits[fetch_index()].name} '
+                                                              f'and its data will be lost.',
+                                   size_hint=(0.6, 0.2),
+                                   buttons=[delete_button, cancel_button])
+            self.dialog.open()
+        except IndexError:
+            pass
 
     def dbox_cancel(self, *args):
         self.dialog.dismiss()
@@ -93,39 +110,50 @@ class EditScreen(MDScreen):
     def save(self, instance):
         """ Reassigns Habit object attributes name, description and goal using TextField's values. """
         # self.frequency.text isn't checked anymore, because of Spinner values it's always valid
-        if not self.habit_name.text == "" and not self.goal.text == "" and not self.goal.text == '0':
-            habits[fetch_index()].name = self.habit_name.text
-            habits[fetch_index()].description = self.description.text
-            habits[fetch_index()].goal = self.goal.text
-            habits[fetch_index()].frequency = self.frequency.text
-            save_changes(habits)
-            print("Changes has been saved.")
-            self.manager.current = 'MainScreen'
-            
-        elif self.goal.text == "0":
-            self.goal_err = MDLabel(text='Goal cannot be zero!',
-                                    font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
-                                    pos_hint={'center_x': 0.19, 'center_y': 0.43}, text_color=(1, 0, 0, 1))
-            self.add_widget(self.goal_err)
-            Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
+        try:
+            if not self.habit_name.text == "" and not self.goal.text == "" and not self.goal.text == '0':
+                habits[fetch_index()].name = self.habit_name.text
+                habits[fetch_index()].description = self.description.text
+                habits[fetch_index()].goal = self.goal.text
+                habits[fetch_index()].frequency = self.frequency.text
+                save_changes(habits)
+                print("Changes has been saved.")
+                self.manager.current = 'MainScreen'
 
-        else:
+            elif self.goal.text == "0":
+                self.goal_err = MDLabel(text='Goal cannot be zero!',
+                                        font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
+                                        pos_hint={'center_x': 0.19, 'center_y': 0.43}, text_color=(1, 0, 0, 1))
+                self.add_widget(self.goal_err)
+                Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
+
+            else:
+                pass
+        except AttributeError:
             pass
 
     def on_leave(self, *args):
         """ Clears the text fields """
-        self.habit_name.text = self.habit_name.hint_text = self.habit_name.helper_text = ""
-        self.habit_name.clear_widgets()
-        self.description.text = ""
-        self.description.clear_widgets()
-        self.goal.text = self.goal.hint_text = self.goal.helper_text = ""
-        self.goal.clear_widgets()
-        self.frequency.clear_widgets()
+        try:
+            self.habit_name.text = self.habit_name.hint_text = self.habit_name.helper_text = ""
+            self.habit_name.clear_widgets()
+            self.description.text = ""
+            self.description.clear_widgets()
+            self.goal.text = self.goal.hint_text = self.goal.helper_text = ""
+            self.goal.clear_widgets()
+            self.frequency.clear_widgets()
+        except IndexError:
+            self.remove_widget(self.err_message_box)
+        except AttributeError:
+            self.remove_widget(self.err_message_box)
 
     def update_textinput_values(self):
-        self.habit_name.text = habits[fetch_index()].name
-        self.description.text = habits[fetch_index()].description
-        self.goal.text = str(habits[fetch_index()].goal)
+        try:
+            self.habit_name.text = habits[fetch_index()].name
+            self.description.text = habits[fetch_index()].description
+            self.goal.text = str(habits[fetch_index()].goal)
+        except IndexError:
+            pass
 
     def cancel(self, instance):
         self.update_textinput_values()

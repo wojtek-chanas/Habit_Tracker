@@ -22,4 +22,3 @@ def load_habits():
     # If file doesn't exist return an empty list
     except FileNotFoundError:
         return []
-

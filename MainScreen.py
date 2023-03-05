@@ -19,6 +19,7 @@ current_habit_index = 0
 class MainScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.dialog = None
         self.table_filter_button = None
         self.table_view_box = None
         self.table_view = None
@@ -36,6 +37,22 @@ class MainScreen(MDScreen):
         metrics_button = Button(text='Metrics', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.6, 'center_y': 0.06})
         metrics_button.bind(on_release=self.goto_metrics)
 
+        # Create 'mark done' button
+        mark_done_button = Button(text='Mark done', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.6, 'center_y': 0.16})
+        mark_done_button.bind(on_release=self.mark_done_in_habits)
+        self.add_widget(mark_done_button)
+    
+        # Create edit button
+        edit_button = Button(text='Edit', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.4, 'center_y': 0.16})
+        edit_button.bind(on_release=self.go_to_menu)
+        self.add_widget(edit_button)
+
+        # Create details button
+        details_button = Button(text='Habit Details', size_hint=(0.4, 0.05),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.235})
+        details_button.bind(on_release=self.goto_details)
+        self.add_widget(details_button)
+
         # Filter list by periodicity
         self.table_view_options = Spinner(values=("all", "daily", "weekly", "monthly", "completed"), text='all',
                                           size_hint=(0.4, None), font_size=18,
@@ -51,6 +68,7 @@ class MainScreen(MDScreen):
 
         self.table_view_box = BoxLayout(orientation='horizontal', size_hint=(0.4, 0.05), spacing=0,
                                         pos_hint={'center_x': 0.77, 'center_y': 0.28})
+        
         # Add widgets to the box
         self.table_view_box.add_widget(self.table_view)
         self.table_view_box.add_widget(self.table_view_options)
@@ -63,6 +81,9 @@ class MainScreen(MDScreen):
 
         # Display the data table
         self.load_table()
+        
+        # Display selected habit
+        self.show_selected_habit()
 
     def load_table(self):
         self.table = MDDataTable(
@@ -94,7 +115,6 @@ class MainScreen(MDScreen):
 
     def row_press(self, table, row):
         self.get_row_index(table, row)
-        self.my_temp_fun()
 
     def get_row_index(self, table, row):
         # get start index from selected row item range
@@ -105,13 +125,13 @@ class MainScreen(MDScreen):
         self.show_selected_habit()
         return current_habit_index
 
-    def my_temp_fun(self):
-        def mark_done_in_habits(*args):
+    def mark_done_in_habits(self, *args):
+        try:
             habits[current_habit_index].mark_done()
             save_changes(habits)
             # Update the table
             self.remove_widget(self.table)
-            self.remove_widget(self.selected_habit_box)
+            # self.remove_widget(self.selected_habit_box)
             self.load_table()
             self.show_selected_habit()
             # Check if the goal is reached, if so display a congrats popup
@@ -134,29 +154,24 @@ class MainScreen(MDScreen):
                                        buttons=[awesome_button])
                 self.dialog.open()
 
-        mark_done_button = Button(text='Mark done', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.6, 'center_y': 0.16})
-        mark_done_button.bind(on_release=mark_done_in_habits)
-        self.add_widget(mark_done_button)
+        except IndexError:
+            pass
 
-        def go_to_menu(*args):
-            self.manager.current = 'EditScreen'
-
-        edit_button = Button(text='Edit', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.4, 'center_y': 0.16})
-        edit_button.bind(on_release=go_to_menu)
-        self.add_widget(edit_button)
-
-        # Create details button
-        details_button = Button(text='Habit Details', size_hint=(0.4, 0.05), pos_hint={'center_x': 0.5, 'center_y': 0.235})
-        details_button.bind(on_release=self.goto_details)
-        self.add_widget(details_button)
+    def go_to_menu(self, *args):
+        self.manager.current = 'EditScreen'
 
     def add_window(self, *args):
         self.manager.current = 'Add new habit'
 
     def show_selected_habit(self):
-        self.selected_habit = MDLabel(text=f'Selected habit:  {habits[current_habit_index].name}',
-                                      font_size=24, size_hint=(0.9, 0.9), height=50,
-                                      pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        try:
+            self.selected_habit = MDLabel(text=f'Selected habit:  {habits[current_habit_index].name}',
+                                          font_size=24, size_hint=(0.9, 0.9), height=50,
+                                          pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        except IndexError:
+            self.selected_habit = MDLabel(text=f'Selected habit:  it\'s empty here',
+                                          font_size=24, size_hint=(0.9, 0.9), height=50,
+                                          pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
         self.selected_habit_box = FrameBoxLayout(orientation='vertical', size_hint=(0.4, 0.05),
                                                  pos_hint={'center_x': 0.255, 'center_y': 0.37})
