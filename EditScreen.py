@@ -1,7 +1,9 @@
+from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.spinner import Spinner
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
 from functions import habits, positive_int_input_filter
@@ -18,6 +20,7 @@ def fetch_index():
 class EditScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.goal_err = None
         self.frequency = None
         self.habit_name = None
         self.description = None
@@ -88,8 +91,9 @@ class EditScreen(MDScreen):
         self.manager.current = 'MainScreen'
 
     def save(self, instance):
-        """ Reassigns Habit object attributes name, description and goal using TextField's values.  """
-        if not self.habit_name.text == "" and not self.goal.text == "" and self.frequency.text in ("Days", "Weeks", "Months"):
+        """ Reassigns Habit object attributes name, description and goal using TextField's values. """
+        # self.frequency.text isn't checked anymore, because of Spinner values it's always valid
+        if not self.habit_name.text == "" and not self.goal.text == "" and not self.goal.text == '0':
             habits[fetch_index()].name = self.habit_name.text
             habits[fetch_index()].description = self.description.text
             habits[fetch_index()].goal = self.goal.text
@@ -97,6 +101,14 @@ class EditScreen(MDScreen):
             save_changes(habits)
             print("Changes has been saved.")
             self.manager.current = 'MainScreen'
+            
+        elif self.goal.text == "0":
+            self.goal_err = MDLabel(text='Goal cannot be zero!',
+                                    font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
+                                    pos_hint={'center_x': 0.19, 'center_y': 0.43}, text_color=(1, 0, 0, 1))
+            self.add_widget(self.goal_err)
+            Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
+
         else:
             pass
 
