@@ -2,6 +2,7 @@ from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
 from AddHabitScreen import AddHabit
 from EditScreen import EditScreen
+from HabitDetailsScreen import HabitDetailsScreen
 from MainScreen import MainScreen
 from StartUpScreen import StartUp
 from MetricsScreen import MetricsScreen
@@ -20,9 +21,11 @@ class MainApp(MDApp):
         sm.add_widget(AddHabit(name='Add new habit'))
         sm.add_widget(EditScreen(name='EditScreen'))
         sm.add_widget(MetricsScreen(name='MetricsScreen'))
+        sm.add_widget(HabitDetailsScreen(name='HabitDetailsScreen.py'))
         # Set window name
         self.title = 'Habit Tracker'
-
+        # Set app icon
+        self.icon = 'icon.png'
         return sm
 
 

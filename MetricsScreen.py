@@ -1,11 +1,11 @@
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.button import Button
 from kivymd.uix.screen import MDScreen
-from functions import habits
 from EditScreen import fetch_index
 from kivymd.uix.progressbar import MDProgressBar
 from kivymd.uix.label import MDLabel
 from kivy.graphics import Color, RoundedRectangle
+from functions import habits
 
 
 class FrameBoxLayout(MDBoxLayout):
@@ -22,7 +22,6 @@ class FrameBoxLayout(MDBoxLayout):
 
 
 def calculate_avg_progress():
-    from functions import habits
     try:
         progress_lst = [len(habit.history)/int(habit.goal) for habit in habits]
         avg_progress = sum(progress_lst)/len(progress_lst)
@@ -53,6 +52,7 @@ class MetricsScreen(MDScreen):
     #     self.update_textinput_values()
 
     def on_enter(self, *args):
+
         print('current index= ', fetch_index())
 
         # The longest streak of all habits
@@ -102,13 +102,14 @@ class MetricsScreen(MDScreen):
 
         # The longest streak of monthly habits
         try:
-            longest_streak_month = max([(habit.longest_streak, habit.name) for habit in habits if habit.frequency ==
-                                        "Months"], key=lambda x: x[0])
+            longest_streak = max([(habit.longest_streak, habit.name) for habit in habits if habit.frequency ==
+                                 "Months"], key=lambda x: x[0])
+            longest_streak_month = f"{longest_streak[1]} " \
+                                   f"with the longest streak of {longest_streak[0]} month(s)"
+
         except ValueError:
             longest_streak_month = "No habit match the search criteria."
-        self.longest_monthly = MDLabel(text=f"The longest streak among monthly habits belongs to: "
-                                            f"\n{longest_streak_month[1]}"
-                                            f" with the longest streak of {longest_streak_month[0]} month(s)",
+        self.longest_monthly = MDLabel(text= f"The longest streak among monthly habits belongs to: \n{longest_streak_month}",
                                        font_size=24, size_hint=(0.9, 0.9), height=50,
                                        pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
