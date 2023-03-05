@@ -11,6 +11,7 @@ from data import save_changes
 class AddHabit(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.goal_err = None
         self.frequency_err = None
 
     def on_enter(self, *args):
@@ -76,7 +77,14 @@ class AddHabit(MDScreen):
         """ Function passes parameters to add_habit() function, brings user back to the MainScreen and refreshes
          the data table on the MainScreen if all the parameters are correct. If one or more required parameters
          are wrong the function won't do anything """
-        if not name == "" and not goal == "" and frequency in ("Days", "Weeks", "Months"):
+        if int(goal) == 0:
+            self.goal_err = MDLabel(text='Goal cannot be zero!',
+                                    font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
+                                    pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))
+            self.add_widget(self.goal_err)
+            Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 2)
+
+        elif not name == "" and not goal == "" and frequency in ("Days", "Weeks", "Months"):
             add_habit(name, description, goal, frequency)
             self.manager.current = 'MainScreen'
             self.manager.get_screen("MainScreen").table.row_data = [(habit.index + 1, habit.name, habit.description,
@@ -84,13 +92,13 @@ class AddHabit(MDScreen):
                                                                     in habits]
             save_changes(habits)
             self.manager.current = 'MainScreen'
+            
         elif frequency not in ("Days", "Weeks", "Months"):
             self.frequency_err = MDLabel(text='Select the periodicity first!',
                                          font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
                                          pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))
             self.add_widget(self.frequency_err)
             Clock.schedule_once(lambda x: self.remove_widget(self.frequency_err), 2)
-
 
         else:
             pass
