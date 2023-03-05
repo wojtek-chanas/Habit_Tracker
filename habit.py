@@ -15,6 +15,7 @@ class Habit:
         self.frequency = frequency
         self.longest_streak = 0
         self.creation_date = None
+        self.streak_str = None
 
     def count_streak(self):
         """ Returns current day-streak. """
@@ -29,7 +30,7 @@ class Habit:
                     self.streak += 1
 
                     # update the longest streak if current streak is longer
-                    if self.streak > self.longest_streak:
+                    if self.streak >= self.longest_streak:
                         self.longest_streak = self.streak
 
                 elif sorted_history[i] - sorted_history[i - 1] > timedelta(days=1):  # break the streak
@@ -48,7 +49,7 @@ class Habit:
                 if sorted_history[i].isocalendar().week - sorted_history[i - 1].isocalendar().week == 1:
                     self.streak += 1
                     # update the longest streak if current streak is longer
-                    if self.streak > self.longest_streak:
+                    if self.streak >= self.longest_streak:
                         self.longest_streak = self.streak
 
                 elif sorted_history[i].isocalendar().week == sorted_history[i - 1].isocalendar().week:
@@ -74,7 +75,7 @@ class Habit:
                         - sorted_history[i-1].year == 1:
                     self.streak += 1
                     # update the longest streak if current streak is longer
-                    if self.streak > self.longest_streak:
+                    if self.streak >= self.longest_streak:
                         self.longest_streak = self.streak
 
                 # Break the streak
@@ -133,3 +134,8 @@ class Habit:
             self.count_progress()
             self.isCompleted = False
             self.congratulate = False
+
+    def streak_st(self):
+        streak_st = str(self.streak) + " " + self.frequency[:-1].lower() + "(s)"
+        self.streak_str = streak_st
+        return self.streak_str
