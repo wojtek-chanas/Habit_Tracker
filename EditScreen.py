@@ -143,7 +143,7 @@ class EditScreen(MDScreen):
             for habit in habits:
                 if self.habit_name.text == habit.name:
                     counter += 1
-            if counter > 1:
+            if counter >= 1 and not self.habit_name.text in [habit.name for habit in habits]:
                 if self.name_err is not None:
                     # Prevents error message from getting stuck on the screen if called more than once
                     self.remove_widget(self.name_err)
@@ -173,6 +173,19 @@ class EditScreen(MDScreen):
 
                     self.add_widget(self.goal_err)
                     Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
+
+            # elif self.habit_name.text in [habit.name for habit in habits]:
+            #     if self.name_err is not None:
+            #         # Prevents error message from getting stuck on the screen if called more than once
+            #         self.remove_widget(self.name_err)
+            #     self.name_err = MDLabel(text='Name already exists!',
+            #                             halign='left',
+            #                             font_size=24, size_hint=(0.25, 0.9),
+            #                             height=50, theme_text_color='Error',
+            #                             pos_hint={'center_x': 0.13, 'center_y': 0.83},
+            #                             text_color=(1, 0, 0, 1))
+            #     self.add_widget(self.name_err)
+            #     Clock.schedule_once(lambda x: self.remove_widget(self.name_err), 3)
             elif not self.habit_name.text == "" and not self.goal.text == "" and not self.goal.text == '0':
                 habits[fetch_index()].name = self.habit_name.text
                 habits[fetch_index()].description = self.description.text
