@@ -55,7 +55,7 @@ class AddHabit(MDScreen):
                             size_hint_y=None,
                             height=50,
                             pos_hint={'center_x': 0.5, 'center_y': 0.35},
-                            text='Select habit\'s frequency')
+                            text='Select habit\'s periodicity')
 
         # Create buttons
         save_button = Button(text='Save', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.4, 'center_y': 0.1})
@@ -78,7 +78,10 @@ class AddHabit(MDScreen):
          the data table on the MainScreen if all the parameters are correct. If one or more required parameters
          are wrong the function won't do anything """
         if int(goal) == 0:
-            self.goal_err = MDLabel(text='Goal cannot be zero!',
+            if self.goal_err is not None:
+                # Prevents error message from getting stuck on the screen if called more than once
+                self.remove_widget(self.goal_err)
+            self.goal_err = MDLabel(text='Goal cannot be zero!', halign='center',
                                     font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
                                     pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))
             self.add_widget(self.goal_err)
@@ -94,7 +97,9 @@ class AddHabit(MDScreen):
             self.manager.current = 'MainScreen'
             
         elif frequency not in ("Days", "Weeks", "Months"):
-            self.frequency_err = MDLabel(text='Select the periodicity first!',
+            if self.frequency_err is not None:
+                self.remove_widget(self.frequency_err)
+            self.frequency_err = MDLabel(text='Select the periodicity first!', halign='center',
                                          font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
                                          pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))
             self.add_widget(self.frequency_err)

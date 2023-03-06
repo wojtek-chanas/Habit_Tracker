@@ -121,27 +121,26 @@ class EditScreen(MDScreen):
                 self.manager.current = 'MainScreen'
 
             elif self.goal.text == "0":
+                if self.goal_err is not None:
+                    self.remove_widget(self.goal_err)
                 self.goal_err = MDLabel(text='Goal cannot be zero!',
                                         font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
                                         pos_hint={'center_x': 0.19, 'center_y': 0.43}, text_color=(1, 0, 0, 1))
                 self.add_widget(self.goal_err)
                 Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
 
-            else:
-                pass
         except AttributeError:
+            pass
+        except IndexError:
             pass
 
     def on_leave(self, *args):
         """ Clears the text fields """
         try:
-            self.habit_name.text = self.habit_name.hint_text = self.habit_name.helper_text = ""
-            self.habit_name.clear_widgets()
-            self.description.text = ""
-            self.description.clear_widgets()
-            self.goal.text = self.goal.hint_text = self.goal.helper_text = ""
-            self.goal.clear_widgets()
-            self.frequency.clear_widgets()
+            self.remove_widget(self.habit_name)
+            self.remove_widget(self.description)
+            self.remove_widget(self.goal)
+            self.remove_widget(self.frequency)
         except IndexError:
             self.remove_widget(self.err_message_box)
         except AttributeError:

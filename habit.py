@@ -5,7 +5,7 @@ class Habit:
     def __init__(self, name, description, goal, frequency):
         self.congratulate = False
         self.index = None
-        self.streak = 1
+        self.streak = 0
         self.name = name
         self.description = description
         self.goal = goal
@@ -43,6 +43,7 @@ class Habit:
             return outcome
 
         elif self.frequency == 'Weeks':
+            self.streak = 0
             for i in range(0, len(self.history)):
                 # datetime.date.isocalendar() allows to compare week numbers, so the amount of days in between each
                 # completion of the habit doesn't matter, as long as it's marked completed in two consecutive weeks
@@ -68,6 +69,7 @@ class Habit:
             return outcome
 
         elif self.frequency == 'Months':
+            self.streak = 0
             for i in range(0, len(self.history)):
                 # compare month numbers and add extra condition for habit done consecutively in december and january
                 if sorted_history[i].month - sorted_history[i - 1].month == 1 or \
@@ -84,7 +86,7 @@ class Habit:
 
                 # don't change anything if habit was done multiple times in the same month
                 elif sorted_history[i].month == sorted_history[i - 1].month:
-                    self.streak = self.streak
+                    pass
 
                 # set streak to 1 once the habit is completed for the first time
                 elif len(self.history) == 1:
@@ -136,6 +138,7 @@ class Habit:
             self.congratulate = False
 
     def streak_st(self):
+        self.count_streak()
         streak_st = str(self.streak) + " " + self.frequency[:-1].lower() + "(s)"
         self.streak_str = streak_st
         return self.streak_str

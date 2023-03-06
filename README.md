@@ -16,35 +16,45 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+## Demo sample
+The project comes equipped with a script to create preloaded habits
+```bash
+python demo.py
+```
+
+## Tests
+❗Important ❗  
+If exists, delete the ```habits.pkl``` file before proceeding, otherwise the test will fail!\
+Run the test by this command:
+```bash
+python -m pytest test.py
+```
 
 ## Features
 
-- Intuitive interface
-- Cross platform solution (KivyMD/Python, can be developed easily on every platform)
-- Possible implementation of user profiles
+- List of all tracked habits
+- Filter by periodicity
+- Metrics for all habits
+- Metrics for selected habit
+- Current streak, the longest streak, progress
+- Self-explanatory UI, pleasant & easy to use
+- Implemented user's input validation and exception handling for hassle-free experience
 
-
-## Usage/Examples
-
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
-```
 
 
 ## 🚀 About Me
-I'm a Data Science student @IU International University of Applied Sciences...
+- Data Science student @[IU International University of Applied Sciences](http://iu.org)
+- from [Gdańsk, PL](https://www.google.com/search?q=Gda%C5%84sk%2C+PL), based in 
+[Lommel, BE](https://www.google.com/search?q=Lommel%2C+BE)
+- Find me on [Github](https://github.com/wojtek-chanas), [LinkedIn](https://www.linkedin.com/in/wojciech-chanas-b0371624b/)
 
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Main Screen](screenshots/MainScreen.png)
+![Sample Validation](screenshots/Sample%20Validation.png)
+![Filter by periodicity](screenshots/FilterByPeriodicity.png)
+![Metrics Screen](screenshots/MetricsScreen.png)
+![Habit Details](screenshots/Habit%20Details.png)
 
-
-## Demo
-
-Insert gif or link to demo
 

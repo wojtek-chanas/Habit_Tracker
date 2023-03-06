@@ -68,7 +68,7 @@ class HabitDetailsScreen(MDScreen):
                                            pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
             # Current streak
-            self.current_streak_label = MDLabel(text=f"Current streak: {habit.streak}", font_size=24,
+            self.current_streak_label = MDLabel(text=f"Current streak: {habit.streak_str}", font_size=24,
                                                 size_hint=(0.9, 0.9), height=50,
                                                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
 

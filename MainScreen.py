@@ -128,6 +128,7 @@ class MainScreen(MDScreen):
     def mark_done_in_habits(self, *args):
         try:
             habits[current_habit_index].mark_done()
+            habits[current_habit_index].streak_st()
             save_changes(habits)
             # Update the table
             self.remove_widget(self.table)
