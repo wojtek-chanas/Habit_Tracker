@@ -11,7 +11,6 @@ from functions import habits, positive_int_input_filter
 from data import save_changes
 
 
-
 def fetch_index():
     """ Returns the current index of selected habit """
     from MainScreen import current_habit_index as chi
@@ -22,6 +21,7 @@ def fetch_index():
 class EditScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.name_err = None
         self.error_message = None
         self.err_message_box = None
         self.goal_err = None
@@ -46,22 +46,43 @@ class EditScreen(MDScreen):
     def on_enter(self, *args):
         print('current index= ', fetch_index())
         try:
-            self.habit_name = MDTextField(hint_text='Change habit name', text=habits[fetch_index()].name, mode="fill",
-                                          helper_text='Name can\'t be empty.', required=True,
-                                          helper_text_mode='on_error', font_size=24, size_hint=(0.9, None), height=50,
+            self.habit_name = MDTextField(hint_text='Change habit name',
+                                          text=habits[fetch_index()].name,
+                                          mode="fill",
+                                          helper_text='Name can\'t be empty.',
+                                          required=True,
+                                          max_text_length=16,
+                                          helper_text_mode='on_error',
+                                          font_size=24,
+                                          size_hint=(0.9, None),
+                                          height=50,
                                           pos_hint={'center_x': 0.5, 'center_y': 0.9})
 
-            self.description = MDTextField(hint_text='Description', text=habits[fetch_index()].description, mode="fill",
-                                           helper_text='Type in a new description.', helper_text_mode='on_focus',
-                                           font_size=24, size_hint=(0.9, None), height=50,
+            self.description = MDTextField(hint_text='Description',
+                                           text=habits[fetch_index()].description,
+                                           mode="fill",
+                                           helper_text='Type in a new description.',
+                                           helper_text_mode='on_focus',
+                                           font_size=24, size_hint=(0.9, None),
+                                           height=50,
                                            pos_hint={'center_x': 0.5, 'center_y': 0.7})
 
-            self.goal = MDTextField(hint_text='Goal', text=habits[fetch_index()].goal, mode="fill",
-                                    helper_text='The goal must be an integer larger than 0', required=True,
-                                    helper_text_mode='on_error', font_size=24, size_hint=(0.9, None), height=50,
-                                    pos_hint={'center_x': 0.5, 'center_y': 0.5}, input_filter=positive_int_input_filter)
+            self.goal = MDTextField(hint_text='Goal',
+                                    text=habits[fetch_index()].goal,
+                                    mode="fill",
+                                    max_text_length=5,
+                                    helper_text='The goal must be an integer larger than 0',
+                                    required=True,
+                                    helper_text_mode='on_error',
+                                    font_size=24, size_hint=(0.9, None),
+                                    height=50,
+                                    pos_hint={'center_x': 0.5, 'center_y': 0.5},
+                                    input_filter=positive_int_input_filter)
 
-            self.frequency = Spinner(values=("Days", "Weeks", "Months"), font_size=24, size_hint_y=None, height=50,
+            self.frequency = Spinner(values=("Days", "Weeks", "Months"),
+                                     font_size=24,
+                                     size_hint_y=None,
+                                     height=50,
                                      pos_hint={'center_x': 0.5, 'center_y': 0.35},
                                      text=habits[fetch_index()].frequency)
 
@@ -71,11 +92,16 @@ class EditScreen(MDScreen):
             self.add_widget(self.frequency)
 
         except IndexError:
-            self.error_message = MDLabel(text=f"Nothing to see here... \nCome back later!", font_size=24,
-                                         size_hint=(0.9, 0.9), height=50, halign='center',
+            self.error_message = MDLabel(text=f"Nothing to see here... \nCome back later!",
+                                         font_size=24,
+                                         size_hint=(0.9, 0.9),
+                                         height=50,
+                                         halign='center',
                                          pos_hint={'center_x': 0.5, 'center_y': 0.5})
-            self.err_message_box = MDBoxLayout(orientation='vertical', size_hint=(0.9, 0.1), pos_hint={'center_x': 0.5,
-                                                                                                     'center_y': 0.5})
+
+            self.err_message_box = MDBoxLayout(orientation='vertical',
+                                               size_hint=(0.9, 0.1),
+                                               pos_hint={'center_x': 0.5, 'center_y': 0.5})
             self.err_message_box.add_widget(self.error_message)
             self.add_widget(self.err_message_box)
 
@@ -84,11 +110,14 @@ class EditScreen(MDScreen):
         try:
             delete_button = MDFlatButton(text='Delete', on_release=self.delete)
             cancel_button = MDFlatButton(text='Cancel', on_release=self.dbox_cancel)
-            self.dialog = MDDialog(title='Delete Habit', text=f'Are you sure? Habit: {habits[fetch_index()].name} '
-                                                              f'and its data will be lost.',
+
+            self.dialog = MDDialog(title='Delete Habit',
+                                   text=f'Are you sure? Habit: {habits[fetch_index()].name} '
+                                        f'and its data will be lost.',
                                    size_hint=(0.6, 0.2),
                                    buttons=[delete_button, cancel_button])
             self.dialog.open()
+
         except IndexError:
             pass
 
@@ -108,10 +137,43 @@ class EditScreen(MDScreen):
         self.manager.current = 'MainScreen'
 
     def save(self, instance):
-        """ Reassigns Habit object attributes name, description and goal using TextField's values. """
-        # self.frequency.text isn't checked anymore, because of Spinner values it's always valid
+        """ Reassigns Habit object attributes name, description, goal and periodicity using TextField's values. """
         try:
-            if not self.habit_name.text == "" and not self.goal.text == "" and not self.goal.text == '0':
+            counter = 0
+            for habit in habits:
+                if self.habit_name.text == habit.name:
+                    counter += 1
+            if counter > 1:
+                if self.name_err is not None:
+                    # Prevents error message from getting stuck on the screen if called more than once
+                    self.remove_widget(self.name_err)
+                self.name_err = MDLabel(text='Name already exists!',
+                                        font_size=24,
+                                        size_hint=(0.25, 0.9),
+                                        height=50,
+                                        theme_text_color='Error',
+                                        pos_hint={'center_x': 0.19, 'center_y': 0.83},
+                                        text_color=(1, 0, 0, 1))
+                self.add_widget(self.name_err)
+                Clock.schedule_once(lambda x: self.remove_widget(self.name_err), 2)
+
+            elif self.goal.text[0] == '0':  # Remove excessive zeros from the input, eg. 007 --> 7
+                while len(self.goal.text) > 1 and self.goal.text[0] == '0':
+                    self.goal.text = self.goal.text[1:]
+                if self.goal.text == "0":
+                    if self.goal_err is not None:
+                        self.remove_widget(self.goal_err)
+                    self.goal_err = MDLabel(text='Goal cannot be zero!',
+                                            font_size=24,
+                                            size_hint=(0.25, 0.9),
+                                            height=50,
+                                            theme_text_color='Error',
+                                            pos_hint={'center_x': 0.19, 'center_y': 0.43},
+                                            text_color=(1, 0, 0, 1))
+
+                    self.add_widget(self.goal_err)
+                    Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
+            elif not self.habit_name.text == "" and not self.goal.text == "" and not self.goal.text == '0':
                 habits[fetch_index()].name = self.habit_name.text
                 habits[fetch_index()].description = self.description.text
                 habits[fetch_index()].goal = self.goal.text
@@ -119,15 +181,6 @@ class EditScreen(MDScreen):
                 save_changes(habits)
                 print("Changes has been saved.")
                 self.manager.current = 'MainScreen'
-
-            elif self.goal.text == "0":
-                if self.goal_err is not None:
-                    self.remove_widget(self.goal_err)
-                self.goal_err = MDLabel(text='Goal cannot be zero!',
-                                        font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
-                                        pos_hint={'center_x': 0.19, 'center_y': 0.43}, text_color=(1, 0, 0, 1))
-                self.add_widget(self.goal_err)
-                Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
 
         except AttributeError:
             pass

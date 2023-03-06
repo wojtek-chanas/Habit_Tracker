@@ -11,13 +11,14 @@ from data import save_changes
 class AddHabit(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.name_err = None
         self.goal_err = None
         self.frequency_err = None
 
     def on_enter(self, *args):
 
         # name variable with required parameter set to True
-        name = MDTextField(hint_text='Habit Name',
+        name = MDTextField(hint_text='Habit Name', max_text_length=16,
                            text='Sample Habit',
                            helper_text='Name is required!',
                            helper_text_mode='on_error',
@@ -38,6 +39,7 @@ class AddHabit(MDScreen):
                                   pos_hint={'center_x': 0.5, 'center_y': 0.7})
 
         goal = MDTextField(hint_text='Goal',
+                           max_text_length=5,
                            text='15',
                            helper_text='The goal must be an integer larger than 0',
                            helper_text_mode='on_error',
@@ -74,13 +76,36 @@ class AddHabit(MDScreen):
         self.add_widget(cancel_button)
 
     def save(self, name, description, goal, frequency):
-        """ Function passes parameters to add_habit() function, brings user back to the MainScreen and refreshes
-         the data table on the MainScreen if all the parameters are correct. If one or more required parameters
-         are wrong the function won't do anything """
-        if int(goal) == 0:
+        """ Function passes parameters to add_habit() function and brings user back to the MainScreen if all the
+         parameters are correct. Otherwise, it displays an error message. """
+
+        if name in [habit.name for habit in habits]:
+
+            if self.name_err is not None:
+                # Prevents error message from getting stuck on the screen if called more than once
+                self.remove_widget(self.name_err)
+
+            self.name_err = MDLabel(text='Name already exists!',
+                                    halign='center',
+                                    font_size=24, size_hint=(0.25, 0.9),
+                                    height=50, theme_text_color='Error',
+                                    pos_hint={'center_x': 0.5, 'center_y': 0.2},
+                                    text_color=(1, 0, 0, 1))
+
+            self.add_widget(self.name_err)
+            Clock.schedule_once(lambda x: self.remove_widget(self.name_err), 2)
+
+        elif goal[0] == '0':  # Remove excessive zeros from the input, eg. 007 --> 7
+
+            while len(goal) > 1 and goal[0] == '0':
+                goal = goal[1:]
+
+        elif int(goal) == 0:
+
             if self.goal_err is not None:
                 # Prevents error message from getting stuck on the screen if called more than once
                 self.remove_widget(self.goal_err)
+
             self.goal_err = MDLabel(text='Goal cannot be zero!', halign='center',
                                     font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
                                     pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))

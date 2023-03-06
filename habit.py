@@ -44,6 +44,8 @@ class Habit:
 
         elif self.frequency == 'Weeks':
             self.streak = 0
+            if len(self.history) == 1:
+                self.streak = 1
             for i in range(0, len(self.history)):
                 # datetime.date.isocalendar() allows to compare week numbers, so the amount of days in between each
                 # completion of the habit doesn't matter, as long as it's marked completed in two consecutive weeks
@@ -70,6 +72,8 @@ class Habit:
 
         elif self.frequency == 'Months':
             self.streak = 0
+            if len(self.history) == 1:
+                self.streak = 1
             for i in range(0, len(self.history)):
                 # compare month numbers and add extra condition for habit done consecutively in december and january
                 if sorted_history[i].month - sorted_history[i - 1].month == 1 or \

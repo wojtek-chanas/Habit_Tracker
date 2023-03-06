@@ -7,11 +7,18 @@ habits = data.load_habits()
 
 def add_habit(name, description, goal, frequency):
     global habits
-    new_habit = Habit(name, description, goal, frequency)
-    new_habit.creation_date = date.today()
-    habits.append(new_habit)
-    new_habit.index = habits.index(new_habit)
-    data.save_changes(habits)
+    flag = True
+    for habit in habits:
+        if habit.name == name:
+            flag = False
+    if flag:
+        new_habit = Habit(name, description, goal, frequency)
+        new_habit.creation_date = date.today()
+        habits.append(new_habit)
+        new_habit.index = habits.index(new_habit)
+        data.save_changes(habits)
+    else:
+        print("Habit name already exists!")
 
 
 def delete_habit(index):

@@ -46,7 +46,7 @@ python -m pytest test.py
 - Data Science student @[IU International University of Applied Sciences](http://iu.org)
 - from [Gdańsk, PL](https://www.google.com/search?q=Gda%C5%84sk%2C+PL), based in 
 [Lommel, BE](https://www.google.com/search?q=Lommel%2C+BE)
-- Find me on [Github](https://github.com/wojtek-chanas), [LinkedIn](https://www.linkedin.com/in/wojciech-chanas-b0371624b/)
+- Find me on [GitHub](https://github.com/wojtek-chanas), [LinkedIn](https://www.linkedin.com/in/wojciech-chanas-b0371624b/)
 
 
 ## Screenshots
