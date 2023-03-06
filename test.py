@@ -15,7 +15,6 @@ class TestDemoAddHabit(unittest.TestCase):
         # test that each habit has a name, description, goal, and frequency
         for habit in habits:
             self.assertTrue(habit.name)
-            # self.assertTrue(habit.description)
             self.assertTrue(habit.goal)
             self.assertTrue(habit.frequency)
 
@@ -86,7 +85,8 @@ class TestHabit(unittest.TestCase):
         self.assertTrue(self.habit.isCompleted)  # Completed successfully
         self.habit.history.append(date(2023, 3, 23))
         self.habit.is_completed()
-        self.assertTrue(self.habit.isCompleted)  # Exceeded goal
+        self.assertTrue(self.habit.isCompleted)
+        self.assertFalse(self.habit.congratulate)  # Exceeded goal
 
 
 if __name__ == '__main__':
