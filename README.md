@@ -51,10 +51,10 @@ python -m pytest test.py
 
 ## Screenshots
 
-![Main Screen](screenshots/MainScreen.png)
-![Sample Validation](screenshots/Sample%20Validation.png)
-![Filter by periodicity](screenshots/FilterByPeriodicity.png)
-![Metrics Screen](screenshots/MetricsScreen.png)
-![Habit Details](screenshots/Habit%20Details.png)
+![Filter by period![FilterByPeriodicity](https://user-images.githubusercontent.com/121888108/223004260-3f44f3c2-5a83-41e8-8b19-f8ca36955c8c.png)
+![Habit Details](https://user-images.githubusercontent.com/121888108/223004262-0ea5c731-ae8e-42b3-84a1-466a9ccfa6b6.png)
+![MainScreen](https://user-images.githubusercontent.com/121888108/223004264-5d677143-9d86-4808-a636-abc890dcf53a.png)
+![MetricsScreen](https://user-images.githubusercontent.com/121888108/223004265-d5c5252a-98ed-4a52-925b-b4df239679d6.png)
+![Sample Validation](https://user-images.githubusercontent.com/121888108/223004266-1bb7815f-e63e-4567-a4c5-8d4ca20dfae7.png)
 
 
