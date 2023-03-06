@@ -80,37 +80,32 @@ class AddHabit(MDScreen):
          parameters are correct. Otherwise, it displays an error message. """
 
         if name in [habit.name for habit in habits]:
-
             if self.name_err is not None:
                 # Prevents error message from getting stuck on the screen if called more than once
                 self.remove_widget(self.name_err)
-
             self.name_err = MDLabel(text='Name already exists!',
-                                    halign='center',
+                                    halign='left',
                                     font_size=24, size_hint=(0.25, 0.9),
                                     height=50, theme_text_color='Error',
-                                    pos_hint={'center_x': 0.5, 'center_y': 0.2},
+                                    pos_hint={'center_x': 0.13, 'center_y': 0.83},
                                     text_color=(1, 0, 0, 1))
-
             self.add_widget(self.name_err)
             Clock.schedule_once(lambda x: self.remove_widget(self.name_err), 2)
 
-        elif goal[0] == '0':  # Remove excessive zeros from the input, eg. 007 --> 7
-
-            while len(goal) > 1 and goal[0] == '0':
-                goal = goal[1:]
-
-        elif int(goal) == 0:
-
+        while len(goal) > 1 and goal[0] == '0':  # Remove excessive zeros from the input, eg. 007 --> 7
+            goal = goal[1:]
+        if goal == "0":
             if self.goal_err is not None:
-                # Prevents error message from getting stuck on the screen if called more than once
                 self.remove_widget(self.goal_err)
-
-            self.goal_err = MDLabel(text='Goal cannot be zero!', halign='center',
-                                    font_size=24, size_hint=(0.25, 0.9), height=50, theme_text_color='Error',
-                                    pos_hint={'center_x': 0.5, 'center_y': 0.2}, text_color=(1, 0, 0, 1))
+            self.goal_err = MDLabel(text='Goal cannot be zero!',
+                                    font_size=24,
+                                    size_hint=(0.25, 0.9),
+                                    height=50,
+                                    theme_text_color='Error',
+                                    pos_hint={'center_x': 0.19, 'center_y': 0.43},
+                                    text_color=(1, 0, 0, 1))
             self.add_widget(self.goal_err)
-            Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 2)
+            Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
 
         elif not name == "" and not goal == "" and frequency in ("Days", "Weeks", "Months"):
             add_habit(name, description, goal, frequency)
