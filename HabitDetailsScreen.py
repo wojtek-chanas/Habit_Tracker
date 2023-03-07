@@ -23,6 +23,7 @@ class FrameBoxLayout(MDBoxLayout):
 class HabitDetailsScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.habit_progress_label = None
         self.error_message = None
         self.longest_streak_label = None
         self.current_streak_label = None
