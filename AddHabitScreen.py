@@ -80,7 +80,7 @@ class AddHabit(MDScreen):
          parameters are correct. Otherwise, it displays an error message. """
         while len(goal) > 1 and goal[0] == '0':  # Remove excessive zeros from the input, eg. 007 --> 7
             goal = goal[1:]
-        if goal == "0":
+        if int(goal) == 0:
             if self.goal_err is not None:
                 self.remove_widget(self.goal_err)
             self.goal_err = MDLabel(text='Goal cannot be zero!',
@@ -94,7 +94,7 @@ class AddHabit(MDScreen):
             self.add_widget(self.goal_err)
             Clock.schedule_once(lambda x: self.remove_widget(self.goal_err), 3)
 
-        if name in [habit.name for habit in habits]:
+        elif name in [habit.name for habit in habits]:
             if self.name_err is not None:
                 # Prevents error message from getting stuck on the screen if called more than once
                 self.remove_widget(self.name_err)

@@ -185,7 +185,9 @@ class EditScreen(MDScreen):
                 habits[fetch_index()].name = self.habit_name.text
                 habits[fetch_index()].description = self.description.text
                 habits[fetch_index()].goal = self.goal.text
-                habits[fetch_index()].frequency = self.frequency.text
+                if habits[fetch_index()].frequency != self.frequency.text:  # if periodicity changes recount the streak
+                    habits[fetch_index()].frequency = self.frequency.text
+                    habits[fetch_index()].count_streak()
                 save_changes(habits)
                 print("Changes has been saved.")
                 self.manager.current = 'MainScreen'

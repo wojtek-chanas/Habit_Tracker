@@ -181,7 +181,8 @@ class MainScreen(MDScreen):
         self.add_widget(self.selected_habit_box)
 
     def filter_table(self, *args):
-
+        for habit in habits:  # Refresh streaks
+            habit.count_streak()
         if self.table_view_options.text == "all":
 
             self.table.row_data = [(habit.index + 1, habit.name, habit.description, habit.when_done(),
