@@ -16,7 +16,8 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-## Demo sample
+
+## Sample habits
 The project comes equipped with a script to create preloaded habits
 ```bash
 python demo.py
@@ -41,6 +42,8 @@ python -m pytest test.py
 - Implemented user's input validation and exception handling for hassle-free experience
 
 
+## Demo 
+https://user-images.githubusercontent.com/121888108/223415620-4189efb2-6ef6-42f1-a812-ac81755f31fb.mp4
 
 ## 🚀 About Me
 - Data Science student @[IU International University of Applied Sciences](http://iu.org)
@@ -48,13 +51,5 @@ python -m pytest test.py
 [Lommel, BE](https://www.google.com/search?q=Lommel%2C+BE)
 - Find me on [GitHub](https://github.com/wojtek-chanas), [LinkedIn](https://www.linkedin.com/in/wojciech-chanas-b0371624b/)
 
-
-## Screenshots
-
-![FilterByPeriodicity](https://user-images.githubusercontent.com/121888108/223004260-3f44f3c2-5a83-41e8-8b19-f8ca36955c8c.png)
-![Habit Details](https://user-images.githubusercontent.com/121888108/223004262-0ea5c731-ae8e-42b3-84a1-466a9ccfa6b6.png)
-![MainScreen](https://user-images.githubusercontent.com/121888108/223004264-5d677143-9d86-4808-a636-abc890dcf53a.png)
-![MetricsScreen](https://user-images.githubusercontent.com/121888108/223004265-d5c5252a-98ed-4a52-925b-b4df239679d6.png)
-![Sample Validation](https://user-images.githubusercontent.com/121888108/223004266-1bb7815f-e63e-4567-a4c5-8d4ca20dfae7.png)
 
 
