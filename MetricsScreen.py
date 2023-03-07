@@ -5,7 +5,7 @@ from EditScreen import fetch_index
 from kivymd.uix.progressbar import MDProgressBar
 from kivymd.uix.label import MDLabel
 from kivy.graphics import Color, RoundedRectangle
-from functions import habits
+from functions import habits, calculate_avg_progress
 
 
 class FrameBoxLayout(MDBoxLayout):
@@ -21,17 +21,6 @@ class FrameBoxLayout(MDBoxLayout):
         self.rect.size = instance.size
 
 
-def calculate_avg_progress():
-    try:
-        progress_lst = [len(habit.history)/int(habit.goal) for habit in habits]
-        avg_progress = sum(progress_lst)/len(progress_lst)
-        print("list: ", progress_lst)
-        print("avg_p:", avg_progress)
-    except ZeroDivisionError:
-        avg_progress = 0
-    return avg_progress
-
-
 class MetricsScreen(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -43,9 +32,6 @@ class MetricsScreen(MDScreen):
         self.avg_progress_bar = None
         self.longest_all = None
         self.longest_monthly = None
-        back_button = Button(text='Back to menu', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.5, 'center_y': 0.1})
-        back_button.bind(on_release=self.back)
-        self.add_widget(back_button)
 
     def back(self, *args):
         self.manager.current = 'MainScreen'
@@ -165,3 +151,11 @@ class MetricsScreen(MDScreen):
         self.add_widget(longest_all_box)
         self.add_widget(average_progress_box)
         self.add_widget(oldest_habit_box)
+
+        # Create back button
+        back_button = Button(text='Back to menu', size_hint=(0.2, 0.1), pos_hint={'center_x': 0.5, 'center_y': 0.1})
+        back_button.bind(on_release=self.back)
+        self.add_widget(back_button)
+
+    def on_leave(self, *args):
+        self.clear_widgets()

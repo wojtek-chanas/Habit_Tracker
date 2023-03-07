@@ -55,10 +55,6 @@ class Habit:
                     if self.streak >= self.longest_streak:
                         self.longest_streak = self.streak
 
-                elif sorted_history[i].isocalendar().week == sorted_history[i - 1].isocalendar().week:
-                    # If done more than once in same week
-                    self.streak = self.streak
-
                 elif sorted_history[i].isocalendar().week - sorted_history[i - 1].isocalendar().week > 1:
                     # Break the streak
                     self.streak = 1
@@ -114,10 +110,36 @@ class Habit:
         else:
             return self.history[-1].strftime("%d-%m-%Y")
 
-    def count_progress(self):
+    def count_progress(self) -> str:
         """ Assigns and returns self.progress attribute.  """
-        self.progress = f"{len(self.history)}/{self.goal}"
-        return self.progress
+        counter = 0
+        try:
+            sorted_history = sorted(self.history, reverse=False)
+            if self.frequency == 'Days':
+                for i in range(0, len(self.history)):
+                    if sorted_history[i] - sorted_history[i - 1] <= timedelta(days=1):
+                        counter += 1
+            elif self.frequency == 'Weeks':
+                for i in range(0, len(self.history)):
+                    # datetime.date.isocalendar() allows to compare week numbers, so the amount of days in between each
+                    # completion of the habit doesn't matter, as long as it's marked completed in two consecutive weeks
+                    if sorted_history[i].isocalendar().week - sorted_history[i - 1].isocalendar().week == 1:
+                        counter += 1
+            elif self.frequency == 'Months':
+                for i in range(0, len(self.history)):
+                    # compare month numbers and add extra condition for habit done consecutively in december and january
+                    if sorted_history[i].month - sorted_history[i - 1].month == 1 or \
+                            (sorted_history[i].month == 1 and sorted_history[i - 1].month == 12) and sorted_history[i].year\
+                            - sorted_history[i-1].year == 1:
+                        counter += 1
+        except IndexError:
+            if len(self.history) == 0:
+                counter = 0
+            elif len(self.history) == 1:
+                counter = 1
+        finally:
+            self.progress = f"{counter}/{self.goal}"
+            return self.progress
 
     def is_completed(self):
         """ Method checks whether the habit's goal can be recognized as accomplished  """

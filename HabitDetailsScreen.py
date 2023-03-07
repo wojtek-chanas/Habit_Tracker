@@ -4,7 +4,7 @@ from kivymd.uix.screen import MDScreen
 from EditScreen import fetch_index
 from kivymd.uix.label import MDLabel
 from kivy.graphics import Color, RoundedRectangle
-from functions import habits
+from functions import habits, compute_progress
 
 
 class FrameBoxLayout(MDBoxLayout):
@@ -18,15 +18,6 @@ class FrameBoxLayout(MDBoxLayout):
     def _update_rect(self, instance, value):
         self.rect.pos = instance.pos
         self.rect.size = instance.size
-
-
-def compute_progress():
-    habit = habits[fetch_index()]
-    try:
-        progress = len(habit.history)/int(habit.goal)
-    except ZeroDivisionError:
-        progress = 0
-    return progress
 
 
 class HabitDetailsScreen(MDScreen):

@@ -42,3 +42,30 @@ def positive_int_input_filter(text, from_undo=False):
             return ""
     except ValueError:
         return ""
+
+
+def calculate_avg_progress():
+    try:
+        progress_lst = [len(habit.history)/int(habit.goal) for habit in habits]
+        avg_progress = sum(progress_lst)/len(progress_lst)
+        print("list: ", progress_lst)
+        print("avg_p:", avg_progress)
+    except ZeroDivisionError:
+        avg_progress = 0
+    return avg_progress
+
+
+def fetch_index():
+    """ Returns the current index of selected habit """
+    from MainScreen import current_habit_index as chi
+    temp_var = chi
+    return temp_var
+
+
+def compute_progress():
+    habit = habits[fetch_index()]
+    try:
+        progress = len(habit.history)/int(habit.goal)
+    except ZeroDivisionError:
+        progress = 0
+    return progress

@@ -7,15 +7,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
-from functions import habits, positive_int_input_filter
+from functions import habits, positive_int_input_filter, fetch_index
 from data import save_changes
-
-
-def fetch_index():
-    """ Returns the current index of selected habit """
-    from MainScreen import current_habit_index as chi
-    temp_var = chi
-    return temp_var
 
 
 class EditScreen(MDScreen):
