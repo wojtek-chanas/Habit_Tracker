@@ -51,7 +51,11 @@ def demo_add_habit():
         habits.append(new_habit)
         new_habit.index = habits.index(new_habit)
         n = randint(1, int(goal))
-        random_history = sorted([random_date() for _ in range(n)])
+        random_history = []
+        for _ in range(n):
+            rand_day = random_date()
+            if rand_day not in random_history:
+                random_history.append(rand_day)
         for _ in random_history:
             new_habit.history.append(_)
             new_habit.count_streak()
