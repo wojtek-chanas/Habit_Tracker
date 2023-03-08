@@ -65,8 +65,9 @@ class HabitDetailsScreen(MDScreen):
                                                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
             # Longest streak
-            self.longest_streak_label = MDLabel(text=f"Longest streak: {habit.longest_streak}", font_size=24,
-                                                size_hint=(0.9, 0.9), height=50,
+            self.longest_streak_label = MDLabel(text=f"Longest streak: {habit.longest_streak}"
+                                                     f" {habit.frequency[0:-1].lower()}(s)",
+                                                font_size=24, size_hint=(0.9, 0.9), height=50,
                                                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
             # Progress
             habit_progress = compute_progress()
