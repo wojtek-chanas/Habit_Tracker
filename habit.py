@@ -75,8 +75,8 @@ class Habit:
             elif len(self.history) == 1:
                 self.streak = 1
             elif today.month - sorted_history[-1].month > 1 and not (today.month == 1 and sorted_history[-1].month == 12
-                                                                   and today.isocalendar().year
-                                                                   - sorted_history[-1].year == 1):
+                                                                     and today.isocalendar().year
+                                                                     - sorted_history[-1].year == 1):
                 self.streak = 0
 
             else:
@@ -133,7 +133,7 @@ class Habit:
                     # compare month numbers and add extra condition for habit done consecutively in december and january
                     if sorted_history[i].month - sorted_history[i - 1].month == 1 \
                             or (sorted_history[i].month == 1 and sorted_history[i - 1].month == 12) \
-                            and sorted_history[i].year - sorted_history[i-1].year == 1:
+                            and sorted_history[i].year - sorted_history[i - 1].year == 1:
                         counter += 1
         except IndexError:
             if len(self.history) == 0:
@@ -148,11 +148,11 @@ class Habit:
         """ Method checks whether the habit's goal can be recognized as accomplished  """
         try:
             # The user just achieved the target
-            if int(len(self.history))/int(self.goal) == 1:
+            if int(len(self.history)) / int(self.goal) == 1:
                 self.isCompleted = True
                 self.congratulate = True
             # The user exceeded the goal
-            elif int(len(self.history))/int(self.goal) >= 1:
+            elif int(len(self.history)) / int(self.goal) >= 1:
                 self.isCompleted = True
                 self.congratulate = False
             # Nothing to celebrate yet
