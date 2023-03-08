@@ -39,8 +39,8 @@ def demo_add_habit():
         habits_dict = {0: ("Workout", "Workout at the gym"),
                        1: ("Reading", "Read a book chapter"),
                        2: ("Practice Python", "Solve a challenge"),
-                       3: ("Wash dishes", "no words needed for this"),
-                       4: ("Meditate", "meditation or breathing exercises")}
+                       3: ("Wash dishes", "Seriously, you must do it"),
+                       4: ("Meditate", "Meditation or breathing exercises")}
         name = habits_dict[i][0]
         description = habits_dict[i][1]
         goal = str(randint(1, 100))

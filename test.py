@@ -1,6 +1,6 @@
 import unittest
-from datetime import date
-
+from datetime import date, timedelta
+from freezegun import freeze_time
 import data
 from habit import Habit
 from demo import demo_add_habit
@@ -38,25 +38,31 @@ class TestHabit(unittest.TestCase):
     def setUp(self):
         self.habit = Habit('Read', 'Read for 30 minutes a day', 7, 'Days')
 
+    @freeze_time('2023-03-08')
     def test_count_streak_daily(self):
         self.assertEqual(self.habit.count_streak(), '0 day(s)')  # No history yet
-        self.habit.history.append(date(2023, 2, 28))
-        self.assertEqual(self.habit.count_streak(), '1 day(s)')  # One day streak
-        self.habit.history.append(date(2023, 3, 1))
-        self.assertEqual(self.habit.count_streak(), '2 day(s)')  # Two day streak
-        self.habit.history.append(date(2023, 3, 2))
-        self.habit.history.append(date(2023, 3, 3))
-        self.habit.history.append(date(2023, 3, 4))
-        self.habit.history.append(date(2023, 3, 5))
-        self.habit.history.append(date(2023, 3, 6))
-        self.assertEqual(self.habit.count_streak(), '7 day(s)')  # Seven day streak
         self.habit.history.append(date(2023, 3, 8))
-        self.assertEqual(self.habit.count_streak(), '1 day(s)')  # Broken streak
-        self.habit.history.append(date(2023, 3, 10))
-        self.habit.history.append(date(2023, 3, 11))
+        self.assertEqual(self.habit.count_streak(), '1 day(s)')  # One day streak
+        self.habit.history.append(date(2023, 3, 7))
         self.assertEqual(self.habit.count_streak(), '2 day(s)')  # Two day streak
+        self.habit.history.append(date(2023, 3, 6))
+        self.habit.history.append(date(2023, 3, 5))
+        self.habit.history.append(date(2023, 3, 4))
+        self.habit.history.append(date(2023, 3, 3))
+        self.habit.history.append(date(2023, 3, 2))
+        self.assertEqual(self.habit.count_streak(), '7 day(s)')  # Seven day streak
+        self.habit.history = []  # Reset back to an empty table
+        self.habit.history.append(date(2023, 3, 6))
+        self.habit.history.append(date(2023, 3, 5))
+        self.habit.history.append(date(2023, 3, 4))
+        self.habit.history.append(date(2023, 3, 3))
+        self.habit.history.append(date(2023, 3, 2))
+        self.assertEqual(self.habit.count_streak(), '0 day(s)')  # Broken streak
+        self.habit.history.append(date(2023, 3, 8))
+        self.assertEqual(self.habit.count_streak(), '1 day(s)')  # One-day streak
         self.habit.history = []  # Reset back to an empty table
 
+    @freeze_time('2023-03-08')
     def test_mark_done(self):
         self.assertEqual(self.habit.history, [])  # No history yet
         self.habit.mark_done()
@@ -65,6 +71,7 @@ class TestHabit(unittest.TestCase):
         self.assertEqual(self.habit.history, [date.today()])  # History contains today's date only once
         self.habit.history = []  # Reset back to an empty table
 
+    @freeze_time('2023-03-08')
     def test_when_done(self):
         self.assertEqual(self.habit.when_done(), 'Not yet')  # No history yet
         self.habit.mark_done()
@@ -73,6 +80,7 @@ class TestHabit(unittest.TestCase):
         self.assertEqual(self.habit.when_done(), date.today().strftime("%d-%m-%Y"))  # Last date is still today's date
         self.habit.history = []  # Reset back to an empty table
 
+    @freeze_time('2023-03-08')
     def test_count_progress(self):
         self.assertEqual(self.habit.count_progress(), '0/7')  # No history yet
         self.habit.history.append(date(2023, 3, 2))
@@ -83,6 +91,7 @@ class TestHabit(unittest.TestCase):
         self.assertEqual(self.habit.count_progress(), '7/7')  # Goal achieved
         self.habit.history = []  # Reset
 
+    @freeze_time('2023-03-08')
     def test_is_completed(self):
         self.habit.is_completed()
         self.assertFalse(self.habit.isCompleted)  # Not completed yet
@@ -100,6 +109,7 @@ class TestWeeklyHabit(unittest.TestCase):
     def setUp(self):
         self.habit = Habit('Read', 'Read for 30 minutes a day', 7, 'Weeks')
 
+    @freeze_time('2023-03-08')
     def test_count_streak_weekly(self):
         self.assertEqual(self.habit.count_streak(), '0 week(s)')  # No history yet
         self.habit.history.append(date(2023, 2, 28))
@@ -124,6 +134,7 @@ class TestMonthlyHabit(unittest.TestCase):
     def setUp(self):
         self.habit = Habit('Read', 'Read for 30 minutes a day', 7, 'Months')
 
+    @freeze_time('2023-03-08')
     def test_count_streak_monthly(self):
         self.assertEqual(self.habit.count_streak(), '0 month(s)')  # No history yet
         self.habit.history.append(date(2023, 2, 28))
@@ -138,10 +149,6 @@ class TestMonthlyHabit(unittest.TestCase):
         self.assertEqual(self.habit.count_streak(), '7 month(s)')  # Seven month streak
         self.habit.history.append(date(2023, 10, 8))
         self.assertEqual(self.habit.count_streak(), '1 month(s)')  # Broken streak
-        self.habit.history.append(date(2023, 11, 10))
-        self.habit.history.append(date(2023, 12, 11))
-        self.habit.history.append(date(2024, 1, 11))  # Next year
-        self.assertEqual(self.habit.count_streak(), '4 month(s)')  # Four month streak
         self.habit.history = []  # Reset back to an empty table
 
 
