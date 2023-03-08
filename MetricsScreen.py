@@ -95,7 +95,8 @@ class MetricsScreen(MDScreen):
 
         except ValueError:
             longest_streak_month = "No habit match the search criteria."
-        self.longest_monthly = MDLabel(text= f"The longest streak among monthly habits belongs to: \n{longest_streak_month}",
+        self.longest_monthly = MDLabel(text=f"The longest streak among monthly habits belongs to: "
+                                            f"\n{longest_streak_month}",
                                        font_size=24, size_hint=(0.9, 0.9), height=50,
                                        pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
