@@ -46,7 +46,7 @@ class MetricsScreen(MDScreen):
             longest_streak_all = max([(habit.longest_streak, habit.name, habit.frequency) for habit in habits],
                                      key=lambda x: x[0])
             lgst_strk_all = f" {longest_streak_all[1]}, with a streak of {longest_streak_all[0]} " \
-                            f"{longest_streak_all[2].lower()}."
+                            f"{longest_streak_all[2][:-1].lower()}(s)."
         except ValueError:
             lgst_strk_all = "No habit match the search criteria."
         self.longest_all = MDLabel(text=f'The habit with the longest streak of all habits is: \n{lgst_strk_all}',
