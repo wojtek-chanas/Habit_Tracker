@@ -1,5 +1,5 @@
 import unittest
-from datetime import date, timedelta
+from datetime import date
 from freezegun import freeze_time
 import data
 from habit import Habit
