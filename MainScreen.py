@@ -7,7 +7,6 @@ from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
-
 from MetricsScreen import FrameBoxLayout
 from functions import habits
 from data import save_changes
@@ -117,13 +116,17 @@ class MainScreen(MDScreen):
         self.get_row_index(table, row)
 
     def get_row_index(self, table, row):
-        # get start index from selected row item range
-        start_index, end_index = row.table.recycle_data[row.index]['range']
-        global current_habit_index
-        current_habit_index = int(row.table.recycle_data[start_index]["text"])-1  # deduct 1 to adjust for zero-indexing
-        print("current_index= ", current_habit_index)
-        self.show_selected_habit()
-        return current_habit_index
+        try:
+            # get start index from selected row item range
+            start_index, end_index = row.table.recycle_data[row.index]['range']
+            global current_habit_index
+            current_habit_index = int(row.table.recycle_data[start_index]["text"])-1
+            # deduct 1 from current_habit_index to adjust for zero-indexing
+            print("current_index= ", current_habit_index)
+            self.show_selected_habit()
+            return current_habit_index
+        except IndexError:
+            pass
 
     def mark_done_in_habits(self, *args):
         try:
