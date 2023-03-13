@@ -25,8 +25,6 @@ class Habit:
             # Check if self.history isn't empty
             if len(self.history) == 0:
                 self.streak = 0
-            elif len(self.history) == 1:
-                self.streak = 1
             elif today - sorted_history[-1] > timedelta(days=1):
                 self.streak = 0
             else:
@@ -47,8 +45,6 @@ class Habit:
         elif self.frequency == 'Weeks':
             if len(self.history) == 0:
                 self.streak = 0
-            elif len(self.history) == 1:
-                self.streak = 1
             elif today.isocalendar().week - sorted_history[-1].isocalendar().week > 1:
                 self.streak = 0
             else:
@@ -72,13 +68,10 @@ class Habit:
         elif self.frequency == 'Months':
             if len(self.history) == 0:
                 self.streak = 0
-            elif len(self.history) == 1:
-                self.streak = 1
             elif today.month - sorted_history[-1].month > 1 and not (today.month == 1 and sorted_history[-1].month == 12
                                                                      and today.isocalendar().year
                                                                      - sorted_history[-1].year == 1):
                 self.streak = 0
-
             else:
                 self.streak = 1
                 for i in range(0, len(self.history)):
