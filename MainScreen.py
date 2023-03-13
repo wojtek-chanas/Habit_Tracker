@@ -91,11 +91,11 @@ class MainScreen(MDScreen):
             use_pagination=True,
             check=False,
             column_data=[
-                ("Nr", dp(10)),
+                ("Nr", dp(8)),
                 ("Habit", dp(30)),
                 ("Description", dp(50)),
                 ('Last done', dp(20)),
-                ("Current streak", dp(20)),
+                ("Current streak", dp(22)),
                 ("Progress", dp(15))],
         )
 
